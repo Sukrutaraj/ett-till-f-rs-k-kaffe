@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Koka kaffe</title>
+  <style>
+    body {
+      font-family: "Arial Rounded MT Bold", Arial, sans-serif;
+      background-color: #fffaf5;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #5a3825;
+      margin-bottom: 25px;
+    }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      background-color: #ffffff;
+      border: 3px solid #d6b497;
+      border-radius: 20px;
+      padding: 10px 15px;
+      margin-bottom: 15px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.15);
+    }
+    .step img {
+      width: 120px;
+      height: 120px;
+      border-radius: 15px;
+      object-fit: cover;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .step img:hover {
+      transform: scale(1.05);
+    }
+    .textpart {
+      flex-grow: 1;
+      font-size: 18px;
+      color: #4a3420;
+    }
+    .stepnum {
+      font-size: 16px;
+      color: #8b5a2b;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .checkbox {
+      transform: scale(1.5);
+      margin-right: 10px;
+    }
+    .completed {
+      opacity: 0.6;
+      background-color: #e5f7e5;
+    }
+    .progress {
+      text-align: center;
+      font-size: 20px;
+      color: #4a3420;
+      margin-top: 25px;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      background-color: #d6b497;
+      color: #fff;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #b58f72;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Koka kaffe</h1>
+
+  <div id="stepsContainer"></div>
+
+  <div class="progress" id="progressText">0 av 7 klara</div>
+  <div style="text-align:center;">
+    <button id="resetBtn">Återställ</button>
+  </div>
+
+  <script>
+    const steps = [
+      { text: "Ta fram kaffe filter", file: "ta_fram_filter" },
+      { text: "Sätt i hållaren", file: "satt_i_hallaren" },
+      { text: "2 dl mått kaffepulver", file: "kaffepulver" },
+      { text: "Fyll vatten till den röda markering", file: "fyll_vatten" },
+      { text: "Tryck på timer på väggen", file: "tryck_timer" },
+      { text: "Tryck på den vänstra knappen", file: "tryck_vanstra" },
+      { text: "Hälla i termosen", file: "halla_i_termosen" }
+    ];
+
+    const container = document.getElementById("stepsContainer");
+    const progressText = document.getElementById("progressText");
+    const resetBtn = document.getElementById("resetBtn");
+
+    function updateProgress() {
+      const done = document.querySelectorAll(".checkbox:checked").length;
+      progressText.textContent = `${done} av ${steps.length} klara`;
+    }
+
+    steps.forEach((step, index) => {
+      const div = document.createElement("div");
+      div.className = "step";
+      div.innerHTML = `
+        <input type="checkbox" class="checkbox" id="chk${index}">
+        <img src="${step.file}.png" alt="${step.text}" id="img${index}">
+        <div class="textpart">
+          <div class="stepnum">Steg ${index + 1}</div>
+          <div>${step.text}</div>
+        </div>
+      `;
+      container.appendChild(div);
+
+      const audio = new Audio(`${step.file}.m4a`);
+      div.querySelector("img").addEventListener("click", () => {
+        audio.currentTime = 0;
+        audio.play();
+      });
+
+      const checkbox = div.querySelector(".checkbox");
+      checkbox.addEventListener("change", () => {
+        div.classList.toggle("completed", checkbox.checked);
+        updateProgress();
+      });
+    });
+
+    resetBtn.addEventListener("click", () => {
+      document.querySelectorAll(".checkbox").forEach(chk => chk.checked = false);
+      document.querySelectorAll(".step").forEach(div => div.classList.remove("completed"));
+      updateProgress();
+    });
+  </script>
+</body>
+</html>
